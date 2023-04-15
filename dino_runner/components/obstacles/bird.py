@@ -9,8 +9,13 @@ class Bird(Obstacle):
         self.type = 0
         self.image = BIRD
         super().__init__(self.image, self.type)
-
-        self.rect.y = 250
+        self.Y_POS = 270
+        random_high = random.random()
+        if random_high <= 0.2:
+            self.Y_POS = 335
+        elif random_high >= 0.9:
+            self.Y_POS = 225
+        self.rect.y = self.Y_POS
         self.step_index = 0
 
     def update(self, game_speed, obstacles):
