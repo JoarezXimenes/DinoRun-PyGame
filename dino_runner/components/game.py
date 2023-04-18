@@ -60,18 +60,11 @@ class Game:
         if self.score % 100 == 0:
             self.game_speed += 5
 
-    def draw_score(self):
+    def draw_text(self, texto, x_pos, y_pos):
         font = pygame.font.Font(FONT_STYLE, 22)
-        text = font.render(f"Score: {self.score}", True, (0, 0, 0))
+        text = font.render(texto, True, (0, 0, 0))
         text_rect = text.get_rect()
-        text_rect.center = (1000, 50)
-        self.screen.blit (text, text_rect)
-
-    def draw_death_count(self):
-        font = pygame.font.Font(FONT_STYLE, 22)
-        text = font.render(f"Deaths: {self.death_count}", True, (0, 0, 0))
-        text_rect = text.get_rect()
-        text_rect.center = (850, 50)
+        text_rect.center = (x_pos, y_pos)
         self.screen.blit (text, text_rect)
 
     def draw(self):
@@ -80,8 +73,8 @@ class Game:
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
-        self.draw_score()
-        self.draw_death_count()
+        self.draw_text(f"Score: {self.score}", 1000, 50)
+        self.draw_text(f"Deaths: {self.death_count}", 850, 50)
         pygame.display.update()
         pygame.display.flip()
 
@@ -93,15 +86,6 @@ class Game:
             self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
-    
-    def daw_menu_text(self):
-        half_screen_height = SCREEN_HEIGHT // 2
-        half_screen_width = SCREEN_WIDTH // 2
-        font = pygame.font.Font(FONT_STYLE, 22)
-        text = font.render("Press any key to start", True, (0, 0, 0))
-        text_rect = text.get_rect()
-        text_rect.center = (half_screen_width, half_screen_height)
-        self.screen.blit(text, text_rect)
 
     def handle_events_on_menu(self):
         for event in pygame.event.get():
@@ -117,17 +101,12 @@ class Game:
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            self.daw_menu_text()
+            self.draw_text("Press any key to start", half_screen_width, half_screen_height)
         else:
             self.screen.blit(ICON, (half_screen_width - 20, half_screen_height - 140))
-            self.daw_menu_text()
-            self.draw_score()
-            ##OK mostrar mensagem de "Press any key to restart"
-            ##OK mostrar score atingido
-            ##OK mostrar death_count
-
-            ###OK Resetar score e game_speed quando o jogo for 'restartado' 
-            ###OK Criar método para remover a repetição de código para o texto
+            self.draw_text("Press any key to start", half_screen_width, half_screen_height)
+            self.draw_text(f"Score: {self.score}", 1000, 50)
+            self.draw_text(f"Deaths: {self.death_count}", 850, 50)
 
         pygame.display.flip()  # .update()
 
