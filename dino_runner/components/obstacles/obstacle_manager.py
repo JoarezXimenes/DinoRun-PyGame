@@ -3,13 +3,13 @@ import random
 
 from dino_runner.components.obstacles.cactus import Cactus
 from dino_runner.components.obstacles.bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS
+from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, SHIELD_TYPE, HAMMER_TYPE, HEART_TYPE
 
 
 class ObstacleManager:
     def __init__(self):
         self.obstacles = []
-
+    
     def update(self, game):
         if len(self.obstacles) == 0:
             if random.random() < 0.8:
@@ -17,6 +17,9 @@ class ObstacleManager:
             else:
                 self.obstacles.append(Bird())
 
+        self.handle_colliderect(game)
+
+    def handle_colliderect(self, game):
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
@@ -26,8 +29,13 @@ class ObstacleManager:
                     game.death_count += 1
                     self.obstacles.pop()
                     break
-                else:
+                elif game.player.type == HAMMER_TYPE:
                     self.obstacles.remove(obstacle)
+                elif game.player.type == SHIELD_TYPE:
+                    return
+                elif HEART_TYPE:
+                    self.obstacles.pop()
+                    game.player.power_up_time = 0
 
     def reset_obstacles(self):
         self.obstacles = []
