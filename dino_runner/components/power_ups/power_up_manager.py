@@ -33,12 +33,11 @@ class PowerUpManager:
 
             if game.player.dino_rect.colliderect(power_up.rect):
                 power_up.start_time = pygame.time.get_ticks()
-                game.player.shield = True
                 game.player.has_power_up = True
                 game.player.type = power_up.type
 
                 if power_up.type == HEART_TYPE:
-                    game.player.power_up_time
+                    game.sounds[2].play()
                     game.player.power_up_time = power_up.start_time + (30 * 1000)
                 else:
                     game.player.power_up_time = power_up.start_time + (power_up.duration * 1000)

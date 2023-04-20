@@ -27,11 +27,10 @@ class Dinosaur(Sprite):
 
     def setup_state(self):
         self.has_power_up = False
-        self.shield = False
         self.show_text = False
         self.power_up_time = 0
 
-    def update(self, user_input):
+    def update(self, user_input, game):
         if self.dino_run:
             self.run()
         elif self.dino_jump:
@@ -43,6 +42,7 @@ class Dinosaur(Sprite):
             self.dino_jump = True
             self.dino_run = False
             self.dino_duck = False
+            game.sounds[0].play()
         elif user_input[pygame.K_DOWN] and not self.dino_jump:
             self.dino_duck = True
             self.dino_run = False
