@@ -4,8 +4,8 @@ from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, T
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
-
-FONT_STYLE = "freesansbold.ttf"
+from dino_runner.utils.text import FontEnum, draw_text
+sound_files = ['jump_sound.mp3', 'cutting_wood_sound.mp3', 'life_sound.mp3', "damage_sound.mp3"]
 
 
 class Game:
@@ -25,6 +25,8 @@ class Game:
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
+        self.sounds = []
+        self.load_sounds()
 
     def execute(self):
         self.running = True
@@ -46,6 +48,11 @@ class Game:
             self.update()
             self.draw()
 
+    def load_sounds(self):
+        for file in sound_files:
+            sound = pygame.mixer.Sound(file)
+            self.sounds.append(sound)
+
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -54,7 +61,7 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
-        self.player.update(user_input)
+        self.player.update(user_input, self)
         self.obstacle_manager.update(self)
         self.update_score()
         self.power_up_manager.update(self)
@@ -62,14 +69,15 @@ class Game:
     def update_score(self):
         self.score += 1
         if self.score % 100 == 0:
-            self.game_speed += 5
+            self.game_speed += 3
     
     def draw_power_up_time(self):
         if self.player.has_power_up:
             time_to_show = round((self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)
 
             if time_to_show >= 0:
-                self.draw_text(
+                draw_text(
+                    self,
                     f"{self.player.type.capitalize()} enabled for {time_to_show} seconds",
                     500,
                     40
@@ -78,21 +86,14 @@ class Game:
                 self.player.has_power_up = False
                 self.player.type = DEFAULT_TYPE
 
-    def draw_text(self, texto, x_pos, y_pos):
-        font = pygame.font.Font(FONT_STYLE, 22)
-        text = font.render(texto, True, (0, 0, 0))
-        text_rect = text.get_rect()
-        text_rect.center = (x_pos, y_pos)
-        self.screen.blit (text, text_rect)
-
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill('#FFFFFF')
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
-        self.draw_text(f"Score: {self.score}", 1000, 50)
-        self.draw_text(f"Deaths: {self.death_count}", 850, 50)
+        draw_text(self, f"Score: {self.score}", 1000, 50)
+        draw_text(self, f"Deaths: {self.death_count}", 850, 50)
         self.draw_power_up_time()
         self.power_up_manager.draw(self.screen)
         pygame.display.update()
@@ -121,12 +122,12 @@ class Game:
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            self.draw_text("Press any key to start", half_screen_width, half_screen_height)
+            draw_text(self, "Press any key to start", half_screen_width, half_screen_height, FontEnum.JURASSIC_FONT)
         else:
             self.screen.blit(ICON, (half_screen_width - 20, half_screen_height - 140))
-            self.draw_text("Press any key to start", half_screen_width, half_screen_height)
-            self.draw_text(f"Score: {self.score}", 1000, 50)
-            self.draw_text(f"Deaths: {self.death_count}", 850, 50)
+            draw_text(self, "Press any key to start", half_screen_width, half_screen_height, FontEnum.JURASSIC_FONT)
+            draw_text(self, f"Score: {self.score}", 1000, 50)
+            draw_text(self, f"Deaths: {self.death_count}", 850, 50)
 
         pygame.display.flip()  # .update()
 
