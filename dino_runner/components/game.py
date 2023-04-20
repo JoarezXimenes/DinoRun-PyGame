@@ -11,6 +11,7 @@ sound_files = ['jump_sound.mp3', 'cutting_wood_sound.mp3', 'life_sound.mp3', "da
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -51,6 +52,7 @@ class Game:
     def load_sounds(self):
         for file in sound_files:
             sound = pygame.mixer.Sound(file)
+            sound.set_volume(0.2)
             self.sounds.append(sound)
 
     def events(self):
